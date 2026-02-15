@@ -141,14 +141,39 @@
       display: none;
       position: fixed;
       inset: 0;
+      width: 100vw;
+      height: 100vh;
       background: rgba(255,240,245,.97);
       z-index: 100;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
+      padding: 0;
+      overflow: hidden;
       animation: fadeIn .8s ease;
     }
     #celebration.show { display: flex; }
+
+    #celebration .celebration-content {
+      width: min(96vw, 700px);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 16px;
+      overflow: hidden;
+    }
+
+    #celebration .video-wrap {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
 
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -157,17 +182,23 @@
 
     #celebration h2 {
       font-family: 'Dancing Script', cursive;
-      font-size: 3rem;
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
       color: #e74c7c;
-      margin-bottom: 8px;
+      margin: 0;
+      flex-shrink: 0;
       animation: bounceIn .8s ease;
+      text-align: center;
+      line-height: 1.2;
     }
 
     #celebration .love-msg {
-      font-size: 1.15rem;
+      font-size: clamp(.85rem, 1.8vw, 1rem);
       color: #c06080;
-      margin-bottom: 30px;
+      margin: 0;
+      flex-shrink: 0;
       font-style: italic;
+      text-align: center;
+      line-height: 1.3;
     }
 
     @keyframes bounceIn {
@@ -178,9 +209,11 @@
     }
 
     video {
-      width: min(88vw, 640px);
+      display: block;
       border-radius: 16px;
       box-shadow: 0 12px 48px rgba(200,50,100,.3);
+      object-fit: contain;
+      /* width/height set by JS fitCelebrationVideo() */
     }
 
     /* ── Tiny sparkle hearts in celebration ── */
@@ -309,13 +342,15 @@
 
     /* ── Love letter typing effect ── */
     #love-letter {
-      font-size: .9rem;
+      font-size: .85rem;
       color: #c06080;
       max-width: 400px;
       text-align: center;
-      margin-top: 14px;
+      margin: 0;
+      flex-shrink: 0;
       font-style: italic;
-      min-height: 22px;
+      min-height: 18px;
+      line-height: 1.3;
     }
 
     /* ── Intro overlay ── */
@@ -396,10 +431,14 @@
 
   <!-- Celebration overlay -->
   <div id="celebration">
-    <h2 id="celeb-title">I knew you'd say yes!</h2>
-    <p class="love-msg">You just made my heart do a little backflip</p>
-    <video id="loveVideo" src="assets/video/videoplayback.mp4" controls playsinline></video>
-    <p id="love-letter"></p>
+    <div class="celebration-content">
+      <h2 id="celeb-title">I knew you'd say yes!</h2>
+      <p class="love-msg">You just made my heart do a little backflip</p>
+      <div class="video-wrap">
+        <video id="loveVideo" src="assets/video/videoplayback.mp4" controls playsinline></video>
+      </div>
+      <p id="love-letter"></p>
+    </div>
   </div>
 
   <!-- Meme card popup -->
@@ -420,6 +459,10 @@
     const yesBtn = document.getElementById('yesBtn');
     const questionContainer = document.getElementById('question-container');
     const celebration = document.getElementById('celebration');
+    const loveVideo = document.getElementById('loveVideo');
+    const celebTitleEl = document.getElementById('celeb-title');
+    const loveMsgEl = celebration.querySelector('.love-msg');
+    const loveLetterEl = document.getElementById('love-letter');
     const desperateMsg = document.getElementById('desperate-msg');
     const memeOverlay = document.getElementById('meme-overlay');
 
@@ -544,6 +587,32 @@
       return rectsOverlap(noRect.left, noRect.top, noRect.width, noRect.height);
     }
 
+    function fitCelebrationVideo() {
+      if (!celebration.classList.contains('show')) return;
+      requestAnimationFrame(() => {
+        const vh = window.innerHeight;
+        const titleH = celebTitleEl.getBoundingClientRect().height;
+        const msgH = loveMsgEl.getBoundingClientRect().height;
+        const letterH = loveLetterEl.getBoundingClientRect().height;
+        // padding (40) + gaps (24) + breathing room (20)
+        const reserved = titleH + msgH + letterH + 84;
+        const availH = Math.max(120, vh - reserved);
+        const availW = Math.min(window.innerWidth * 0.92, 640);
+        // get intrinsic aspect ratio; default to 9:16 portrait
+        const ratio = (loveVideo.videoWidth && loveVideo.videoHeight)
+          ? loveVideo.videoWidth / loveVideo.videoHeight
+          : 9 / 16;
+        let finalH = availH;
+        let finalW = finalH * ratio;
+        if (finalW > availW) {
+          finalW = availW;
+          finalH = finalW / ratio;
+        }
+        loveVideo.style.width = Math.round(finalW) + 'px';
+        loveVideo.style.height = Math.round(finalH) + 'px';
+      });
+    }
+
     function runAway() {
       if (escaped) return;
       escaped = true;
@@ -608,8 +677,11 @@
     });
 
     window.addEventListener('resize', () => {
+      fitCelebrationVideo();
       if (currentButtonsOverlap()) placeNoButtonAwayFromYes();
     });
+
+    loveVideo.addEventListener('loadedmetadata', fitCelebrationVideo);
 
     setInterval(() => {
       if (celebration.classList.contains('show')) return;
@@ -618,10 +690,9 @@
 
     /* ═══ CLICK OUTSIDE VIDEO — go back to question ═══ */
     celebration.addEventListener('click', (e) => {
-      const video = document.getElementById('loveVideo');
-      if (video.contains(e.target)) return;
-      video.pause();
-      video.currentTime = 0;
+      if (loveVideo.contains(e.target)) return;
+      loveVideo.pause();
+      loveVideo.currentTime = 0;
       celebration.classList.remove('show');
       questionContainer.style.display = '';
       noBtn.style.display = '';
@@ -686,17 +757,17 @@
         questionContainer.style.display = 'none';
         noBtn.style.display = 'none';
         celebration.classList.add('show');
+        fitCelebrationVideo();
 
         // Force video to play
-        const video = document.getElementById('loveVideo');
-        video.currentTime = 0;
-        video.muted = false;
-        const playPromise = video.play();
+        loveVideo.currentTime = 0;
+        loveVideo.muted = false;
+        const playPromise = loveVideo.play();
         if (playPromise !== undefined) {
           playPromise.catch(() => {
             // If browser blocks unmuted autoplay, mute and retry
-            video.muted = true;
-            video.play();
+            loveVideo.muted = true;
+            loveVideo.play();
           });
         }
 
