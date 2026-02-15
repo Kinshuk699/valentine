@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💕 A Very Important Question 💕</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='50' font-size='50'%3E%F0%9F%92%96%3C/text%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #fff;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: 'Quicksand', sans-serif;
+      position: relative;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><text y='20' font-size='20'>💖</text></svg>") 12 12, auto;
+    }
+
+    /* ── Main question card ── */
+    #question-container {
+      text-align: center;
+      z-index: 10;
+      animation: fadeInUp 1.2s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .big-heart-icon {
+      font-size: 80px;
+      animation: heartbeat 1s infinite;
+      display: inline-block;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25%      { transform: scale(1.15); }
+      50%      { transform: scale(1); }
+      75%      { transform: scale(1.1); }
+    }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3.2rem;
+      color: #e74c7c;
+      margin: 20px 0 10px;
+      text-shadow: 0 2px 8px rgba(231,76,124,.25);
+    }
+
+    .subtext {
+      font-size: 1.05rem;
+      color: #b06080;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    /* ── Desperate message that changes ── */
+    #desperate-msg {
+      font-size: .95rem;
+      color: #d45;
+      min-height: 28px;
+      margin-bottom: 28px;
+      font-weight: 600;
+      transition: all .3s;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* ── YES button ── */
+    .btn-yes {
+      background: linear-gradient(135deg, #ff6b8a, #ff3366);
+      color: #fff;
+      border: none;
+      padding: 18px 54px;
+      font-size: 1.5rem;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(255,51,102,.45);
+      transition: transform .3s, box-shadow .3s, padding .3s, font-size .3s;
+      letter-spacing: 1px;
+      z-index: 10;
+    }
+    .btn-yes:hover {
+      transform: scale(1.12);
+      box-shadow: 0 8px 32px rgba(255,51,102,.6);
+    }
+
+    /* ── NO button ── */
+    .btn-no {
+      background: #f0f0f0;
+      color: #999;
+      border: 2px solid #ddd;
+      padding: 14px 40px;
+      font-size: 1.2rem;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      position: fixed;
+      transition: left 0.3s ease, top 0.3s ease, transform 0.2s;
+      z-index: 9999;
+      user-select: none;
+    }
+    .btn-no:hover {
+      transform: scale(0.9);
+    }
+
+    /* ── Floating hearts ── */
+    .floating-heart {
+      position: fixed;
+      bottom: -60px;
+      font-size: 30px;
+      animation: floatUp linear forwards;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      50%  { opacity: 1; }
+      100% { transform: translateY(-110vh) rotate(360deg) scale(.6); opacity: 0; }
+    }
+
+    /* ── Celebration overlay ── */
+    #celebration {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,240,245,.97);
+      z-index: 100;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn .8s ease;
+    }
+    #celebration.show { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    #celebration h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      color: #e74c7c;
+      margin-bottom: 8px;
+      animation: bounceIn .8s ease;
+    }
+
+    #celebration .love-msg {
+      font-size: 1.15rem;
+      color: #c06080;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    @keyframes bounceIn {
+      0%   { transform: scale(.3); opacity: 0; }
+      50%  { transform: scale(1.08); }
+      70%  { transform: scale(.95); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    video {
+      width: min(88vw, 640px);
+      border-radius: 16px;
+      box-shadow: 0 12px 48px rgba(200,50,100,.3);
+    }
+
+    /* ── Tiny sparkle hearts in celebration ── */
+    .sparkle-heart {
+      position: fixed;
+      font-size: 22px;
+      pointer-events: none;
+      z-index: 101;
+      animation: sparkle 3s linear forwards;
+    }
+
+    @keyframes sparkle {
+      0%   { opacity: 1; transform: translate(0,0) scale(1) rotate(0); }
+      100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0) rotate(720deg); }
+    }
+
+    /* ── Background ambient hearts ── */
+    .ambient-heart {
+      position: fixed;
+      color: rgba(255,200,210,.35);
+      font-size: 18px;
+      pointer-events: none;
+      z-index: 0;
+      animation: ambientFloat linear infinite;
+    }
+
+    @keyframes ambientFloat {
+      0%   { transform: translateY(0) rotate(0); opacity: .3; }
+      50%  { opacity: .15; }
+      100% { transform: translateY(-100vh) rotate(180deg); opacity: 0; }
+    }
+
+    /* ── Cursor trail hearts ── */
+    .trail-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      font-size: 16px;
+      animation: trailFade .8s ease forwards;
+    }
+    @keyframes trailFade {
+      0%   { opacity: 1; transform: scale(1) translateY(0); }
+      100% { opacity: 0; transform: scale(.3) translateY(-30px); }
+    }
+
+    /* ── Meme card popup ── */
+    #meme-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 20000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn .4s ease;
+    }
+    #meme-overlay.show { display: flex; }
+
+    .meme-card {
+      background: #fff8f0;
+      border-radius: 20px;
+      padding: 40px 50px;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+      animation: bounceIn .6s ease;
+      position: relative;
+      border: 4px solid #ffcccc;
+    }
+    .meme-card .meme-emoji {
+      font-size: 80px;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .meme-card .meme-image {
+      width: min(90vw, 340px);
+      max-height: 62vh;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 0;
+      border: 3px solid #ffd0d9;
+      display: none;
+    }
+    .meme-card .meme-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.8rem;
+      color: #d44;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .meme-card .meme-sub {
+      font-size: .95rem;
+      color: #999;
+      font-style: italic;
+    }
+    .meme-card .meme-close {
+      position: absolute;
+      top: 12px;
+      right: 18px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ccc;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+    .meme-card .meme-close:hover { color: #d44; }
+    .meme-card .meme-heart-border {
+      font-size: 100px;
+      color: #ff4444;
+      display: block;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .meme-card .meme-heart-border .meme-inner-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1rem;
+      color: #fff;
+      padding-bottom: 10px;
+    }
+
+    /* ── Love letter typing effect ── */
+    #love-letter {
+      font-size: .9rem;
+      color: #c06080;
+      max-width: 400px;
+      text-align: center;
+      margin-top: 14px;
+      font-style: italic;
+      min-height: 22px;
+    }
+
+    /* ── Intro overlay ── */
+    #intro {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 50000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: opacity 1s ease;
+    }
+    #intro.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #intro .intro-heart {
+      font-size: 50px;
+      margin-bottom: 30px;
+      animation: heartbeat 1.2s infinite;
+    }
+    #intro .intro-line {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2rem;
+      color: #e74c7c;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      line-height: 1.6;
+      text-shadow: 0 2px 10px rgba(231,76,124,.2);
+    }
+    #intro .intro-line.line1 {
+      animation: introReveal 1.2s .5s ease forwards;
+    }
+    #intro .intro-line.line2 {
+      animation: introReveal 1.2s 1.8s ease forwards;
+      margin-top: 6px;
+    }
+    #intro .intro-tap {
+      position: absolute;
+      bottom: 40px;
+      font-size: .9rem;
+      color: #caa;
+      opacity: 0;
+      animation: introReveal 1s 3.2s ease forwards;
+      letter-spacing: .5px;
+    }
+    @keyframes introReveal {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Intro overlay -->
+  <div id="intro">
+    <div class="intro-heart">💌</div>
+    <p class="intro-line line1">Until the poets run out of rhyme</p>
+    <p class="intro-line line2">In other words, until the end of time</p>
+    <p class="intro-tap">tap anywhere to continue</p>
+  </div>
+
+  <!-- Main question -->
+  <div id="question-container">
+    <div class="big-heart-icon">💖</div>
+    <h1>Will you be my Valentine?</h1>
+    <p class="subtext">( pretty please? 🥺 )</p>
+    <p id="desperate-msg"></p>
+    <div class="buttons">
+      <button class="btn-yes" id="yesBtn" onclick="sayYes()">YES!!</button>
+      <button class="btn-no" id="noBtn">NO :(</button>
+    </div>
+  </div>
+
+  <!-- Celebration overlay -->
+  <div id="celebration">
+    <h2 id="celeb-title">I knew you'd say yes!</h2>
+    <p class="love-msg">You just made my heart do a little backflip</p>
+    <video id="loveVideo" src="assets/video/videoplayback.mp4" controls playsinline></video>
+    <p id="love-letter"></p>
+  </div>
+
+  <!-- Meme card popup -->
+  <div id="meme-overlay">
+    <div class="meme-card" id="meme-card">
+      <button class="meme-close" onclick="closeMeme()">&times;</button>
+      <img class="meme-image" id="meme-image" alt="Funny valentine card" />
+      <span class="meme-emoji" id="meme-emoji" style="display:none"></span>
+      <div class="meme-text" id="meme-text"></div>
+      <div class="meme-sub" id="meme-sub"></div>
+    </div>
+  </div>
+
+
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const questionContainer = document.getElementById('question-container');
+    const celebration = document.getElementById('celebration');
+    const desperateMsg = document.getElementById('desperate-msg');
+    const memeOverlay = document.getElementById('meme-overlay');
+
+    let noAttempts = 0;
+    let escaped = false;
+    let ambientInterval;
+
+    /* ═══ INTRO SCREEN ═══ */
+    const intro = document.getElementById('intro');
+    // Hide main content until intro dismissed
+    questionContainer.style.visibility = 'hidden';
+    intro.addEventListener('click', () => {
+      intro.classList.add('fade-out');
+      questionContainer.style.visibility = 'visible';
+      setTimeout(() => intro.remove(), 1000);
+    });
+
+    /* ═══ AMBIENT HEARTS ═══ */
+    function spawnAmbientHeart() {
+      const h = document.createElement('span');
+      h.className = 'ambient-heart';
+      h.textContent = ['♥','♡','💗'][Math.floor(Math.random()*3)];
+      h.style.left = Math.random() * 100 + 'vw';
+      h.style.bottom = '-30px';
+      h.style.fontSize = (14 + Math.random()*14) + 'px';
+      const dur = 6 + Math.random()*8;
+      h.style.animationDuration = dur + 's';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), dur * 1000);
+    }
+    ambientInterval = setInterval(spawnAmbientHeart, 800);
+
+    /* ═══ CURSOR TRAIL HEARTS ═══ */
+    let trailCount = 0;
+    document.addEventListener('mousemove', (e) => {
+      trailCount++;
+      if (trailCount % 3 !== 0) return; // throttle
+      const t = document.createElement('span');
+      t.className = 'trail-heart';
+      t.textContent = ['♥','💕','✨','💗'][Math.floor(Math.random()*4)];
+      t.style.left = e.clientX + 'px';
+      t.style.top = e.clientY + 'px';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 800);
+    });
+
+    /* ═══ DESPERATE MESSAGES ═══ */
+    const desperateMessages = [
+      "",
+      "Wait... are you sure?",
+      "Please reconsider... my heart can't take this",
+      "I made a whole webpage for you!!",
+      "My code is crying right now... literally",
+      "Okay fine, but the YES button is RIGHT THERE",
+      "I'll learn to cook for you!!",
+      "Even my WiFi connection is more stable than your decision",
+      "I've mass-texted everyone saying you said yes... don't embarrass me",
+      "My therapist says I need this win",
+      "Plot twist: there is no NO. There never was.",
+      "You're literally breaking the internet right now",
+      "I'll let you pick what we watch on Netflix. EVERY. TIME.",
+      "Even Siri thinks you should say yes",
+    ];
+
+    const noPopupImage = 'assets/photo/IMG_0428.JPG';
+
+    /* ═══ YES BUTTON GROWS with each NO attempt ═══ */
+    let yesPadding = 18;
+    let yesFontSize = 1.5;
+
+    function growYesButton() {
+      yesPadding += 4;
+      yesFontSize += 0.12;
+      yesBtn.style.padding = `${yesPadding}px ${yesPadding * 3}px`;
+      yesBtn.style.fontSize = `${yesFontSize}rem`;
+    }
+
+    /* ═══ NO BUTTON — runs away, NEVER touches YES ═══ */
+    function getYesBtnRect() {
+      const r = yesBtn.getBoundingClientRect();
+      const pad = 80;
+      return {
+        left:   r.left - pad,
+        right:  r.right + pad,
+        top:    r.top - pad,
+        bottom: r.bottom + pad
+      };
+    }
+
+    function rectsOverlap(x, y, w, h) {
+      const yes = getYesBtnRect();
+      const noRight = x + w;
+      const noBottom = y + h;
+      return !(x > yes.right || noRight < yes.left || y > yes.bottom || noBottom < yes.top);
+    }
+
+    function placeNoButtonAwayFromYes() {
+      const scaleMatch = noBtn.style.transform.match(/scale\(([^)]+)\)/);
+      const currentScale = scaleMatch ? parseFloat(scaleMatch[1]) : 1;
+      const bw = noBtn.offsetWidth * currentScale;
+      const bh = noBtn.offsetHeight * currentScale;
+      const margin = 20;
+      const maxX = Math.max(margin, window.innerWidth - bw - margin);
+      const maxY = Math.max(margin, window.innerHeight - bh - margin);
+
+      let newX = margin;
+      let newY = margin;
+      let tries = 0;
+
+      do {
+        newX = margin + Math.random() * (maxX - margin);
+        newY = margin + Math.random() * (maxY - margin);
+        tries++;
+      } while (rectsOverlap(newX, newY, bw, bh) && tries < 500);
+
+      noBtn.style.left = `${newX}px`;
+      noBtn.style.top = `${newY}px`;
+    }
+
+    function currentButtonsOverlap() {
+      const noRect = noBtn.getBoundingClientRect();
+      return rectsOverlap(noRect.left, noRect.top, noRect.width, noRect.height);
+    }
+
+    function runAway() {
+      if (escaped) return;
+      escaped = true;
+      noAttempts++;
+
+      // Update desperate message
+      const msgIndex = Math.min(noAttempts, desperateMessages.length - 1);
+      desperateMsg.textContent = desperateMessages[msgIndex];
+      desperateMsg.style.animation = 'none';
+      desperateMsg.offsetHeight; // reflow
+      desperateMsg.style.animation = 'bounceIn .4s ease';
+
+      // Grow the YES button
+      growYesButton();
+
+      // NO button shrinks a little each time
+      const shrink = Math.max(0.6, 1 - noAttempts * 0.04);
+      noBtn.style.transform = `scale(${shrink})`;
+
+      // Make NO button float freely
+      noBtn.style.position = 'fixed';
+
+      placeNoButtonAwayFromYes();
+
+      // Show image popup on every 5th NO attempt: 5, 10, 15, ...
+      if (noAttempts % 5 === 0) {
+        showMeme();
+      }
+
+      setTimeout(() => { escaped = false; }, 350);
+    }
+
+    noBtn.addEventListener('mouseenter', runAway);
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); runAway(); }, { passive: false });
+    noBtn.addEventListener('focus', runAway);
+
+    /* ═══ MEME POPUP ═══ */
+    function showMeme() {
+      const memeImage = document.getElementById('meme-image');
+      const memeEmoji = document.getElementById('meme-emoji');
+      const memeText = document.getElementById('meme-text');
+      const memeSub = document.getElementById('meme-sub');
+
+      memeText.textContent = '';
+      memeSub.textContent = '';
+      memeEmoji.style.display = 'none';
+      memeImage.src = noPopupImage;
+      memeImage.style.display = 'block';
+      memeImage.onerror = () => {
+        memeOverlay.classList.remove('show');
+      };
+
+      memeOverlay.classList.add('show');
+    }
+
+    function closeMeme() {
+      memeOverlay.classList.remove('show');
+    }
+
+    memeOverlay.addEventListener('click', (e) => {
+      if (e.target === memeOverlay) closeMeme();
+    });
+
+    window.addEventListener('resize', () => {
+      if (currentButtonsOverlap()) placeNoButtonAwayFromYes();
+    });
+
+    setInterval(() => {
+      if (celebration.classList.contains('show')) return;
+      if (currentButtonsOverlap()) placeNoButtonAwayFromYes();
+    }, 120);
+
+    /* ═══ CLICK OUTSIDE VIDEO — go back to question ═══ */
+    celebration.addEventListener('click', (e) => {
+      const video = document.getElementById('loveVideo');
+      if (video.contains(e.target)) return;
+      video.pause();
+      video.currentTime = 0;
+      celebration.classList.remove('show');
+      questionContainer.style.display = '';
+      noBtn.style.display = '';
+      escaped = false;
+      // Restart ambient hearts
+      ambientInterval = setInterval(spawnAmbientHeart, 800);
+    });
+
+    /* ═══ CHEESY LOVE LETTERS ═══ */
+    const loveLetters = [
+      "P.S. You're the reason I believe in love at first click",
+      "P.S. If you were a JavaScript event, you'd be onLove()",
+      "P.S. You had me at 'Hello World'",
+      "P.S. Are you a magician? Because whenever I look at you, everyone else disappears",
+      "P.S. I must be a snowflake, because I've fallen for you",
+      "P.S. Do you have a map? I just got lost in your eyes",
+    ];
+
+    /* ═══ CELEBRATION TITLES ═══ */
+    const celebTitles = [
+      "I knew you'd say yes!",
+      "Yesss!! My heart is doing backflips!",
+      "You just made me the happiest person alive!",
+      "Finally!! I can breathe again!",
+      "Best. Day. Ever.",
+    ];
+
+    /* ═══ YES BUTTON — hearts + video ═══ */
+    function sayYes() {
+      // Stop ambient hearts
+      clearInterval(ambientInterval);
+
+      // Burst of floating hearts
+      const hearts = ['❤️','💖','💕','💗','💓','💘','💝','🩷','♥️','💞'];
+      for (let i = 0; i < 80; i++) {
+        setTimeout(() => {
+          const h = document.createElement('span');
+          h.className = 'floating-heart';
+          h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+          h.style.left = Math.random() * 100 + 'vw';
+          h.style.fontSize = (20 + Math.random() * 40) + 'px';
+          const dur = 2 + Math.random() * 3;
+          h.style.animationDuration = dur + 's';
+          document.body.appendChild(h);
+          setTimeout(() => h.remove(), dur * 1000);
+        }, i * 50);
+      }
+
+      // After heart-burst delay, show celebration
+      setTimeout(() => {
+        // Remove ALL floating & ambient hearts
+        document.querySelectorAll('.floating-heart, .ambient-heart, .trail-heart').forEach(h => h.remove());
+
+        // Randomize celebration title
+        document.getElementById('celeb-title').textContent =
+          celebTitles[Math.floor(Math.random() * celebTitles.length)];
+
+        // Randomize love letter
+        document.getElementById('love-letter').textContent =
+          loveLetters[Math.floor(Math.random() * loveLetters.length)];
+
+        questionContainer.style.display = 'none';
+        noBtn.style.display = 'none';
+        celebration.classList.add('show');
+
+        // Force video to play
+        const video = document.getElementById('loveVideo');
+        video.currentTime = 0;
+        video.muted = false;
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // If browser blocks unmuted autoplay, mute and retry
+            video.muted = true;
+            video.play();
+          });
+        }
+
+        // Sparkle burst in celebration
+        for (let i = 0; i < 50; i++) {
+          setTimeout(() => {
+            const s = document.createElement('span');
+            s.className = 'sparkle-heart';
+            s.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            s.style.left = 20 + Math.random() * 60 + 'vw';
+            s.style.top = 10 + Math.random() * 40 + 'vh';
+            s.style.setProperty('--dx', (Math.random() - .5) * 400 + 'px');
+            s.style.setProperty('--dy', (Math.random() - .5) * 400 + 'px');
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 3000);
+          }, i * 70);
+        }
+      }, 1800);
+    }
+
+    /* ═══ KONAMI-STYLE EASTER EGG: type "love" for bonus hearts ═══ */
+    let konamiBuffer = '';
+    document.addEventListener('keydown', (e) => {
+      konamiBuffer += e.key.toLowerCase();
+      if (konamiBuffer.includes('love')) {
+        konamiBuffer = '';
+        const hearts = ['❤️','💖','💕','💗','💓','💘'];
+        for (let i = 0; i < 30; i++) {
+          setTimeout(() => {
+            const h = document.createElement('span');
+            h.className = 'floating-heart';
+            h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.fontSize = (24 + Math.random() * 30) + 'px';
+            const dur = 2.5 + Math.random() * 2.5;
+            h.style.animationDuration = dur + 's';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), dur * 1000);
+          }, i * 60);
+        }
+      }
+      if (konamiBuffer.length > 20) konamiBuffer = konamiBuffer.slice(-10);
+    });
+
+    /* ═══ PAGE TITLE CHANGES when you tab away ═══ */
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        document.title = "💔 Come back!! I miss you already...";
+      } else {
+        document.title = "💕 A Very Important Question 💕";
+      }
+    });
+  </script>
+</body>
+</html>
